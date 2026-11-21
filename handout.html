@@ -1,0 +1,671 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LLM 在教學上的運用問題與法理合規實務手冊（圖文講義）</title>
+  <!-- Google Fonts: Inter & Noto Sans TC -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-page: #f8f9fa;
+      --bg-surface: #ffffff;
+      --bg-subtle: #f1f5f9;
+      --text-main: #0f172a;
+      --text-body: #334155;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --border-dark: #cbd5e1;
+      --accent-blue: #2563eb;
+      --accent-blue-subtle: #eff6ff;
+      --accent-danger: #dc2626;
+      --accent-danger-subtle: #fef2f2;
+      --accent-warning: #d97706;
+      --accent-warning-subtle: #fffbeb;
+      --accent-emerald: #059669;
+      --accent-emerald-subtle: #ecfdf5;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-page);
+      color: var(--text-body);
+      font-family: var(--font-sans);
+      font-size: 16px;
+      line-height: 1.75;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Top Sticky Navigation Bar */
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .top-bar-title {
+      font-size: 0.95em;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .top-bar-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      font-size: 0.85em;
+      font-weight: 600;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+    .btn-secondary {
+      background: var(--bg-subtle);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+    }
+    .btn-secondary:hover {
+      background: #e2e8f0;
+    }
+    .btn-primary {
+      background: var(--accent-blue);
+      color: #ffffff;
+      border: 1px solid var(--accent-blue);
+    }
+    .btn-primary:hover {
+      background: #1d4ed8;
+    }
+
+    /* Main Container with Sticky TOC */
+    .layout-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 30px 24px 80px;
+      display: grid;
+      grid-template-columns: 260px minmax(0, 1fr);
+      gap: 40px;
+    }
+
+    /* Sidebar Table of Contents */
+    .sidebar {
+      position: sticky;
+      top: 75px;
+      height: calc(100vh - 95px);
+      overflow-y: auto;
+      padding-right: 12px;
+    }
+    .toc-title {
+      font-size: 0.78em;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+    .toc-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 0.88em;
+    }
+    .toc-item {
+      margin-bottom: 8px;
+    }
+    .toc-link {
+      display: block;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 5px 8px;
+      border-radius: 4px;
+      line-height: 1.4;
+      transition: all 0.15s ease;
+    }
+    .toc-link:hover {
+      color: var(--accent-blue);
+      background: var(--accent-blue-subtle);
+    }
+
+    /* Content Area */
+    .content-area {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 50px 60px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    /* Typography */
+    h1, h2, h3, h4 {
+      color: var(--text-main);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+    }
+    h1 {
+      font-size: 2.2em;
+      line-height: 1.25;
+      margin-top: 0;
+      margin-bottom: 12px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid var(--border-color);
+    }
+    h2 {
+      font-size: 1.5em;
+      margin-top: 50px;
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    h3 {
+      font-size: 1.2em;
+      margin-top: 30px;
+      margin-bottom: 12px;
+    }
+    p { margin-top: 0; margin-bottom: 18px; }
+    strong { color: var(--text-main); }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      font-size: 0.75em;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      border-radius: 4px;
+      background: var(--bg-subtle);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+    .badge-blue { background: var(--accent-blue-subtle); color: var(--accent-blue); border-color: #bfdbfe; }
+    .badge-red { background: var(--accent-danger-subtle); color: var(--accent-danger); border-color: #fecaca; }
+    .badge-amber { background: var(--accent-warning-subtle); color: var(--accent-warning); border-color: #fde68a; }
+    .badge-green { background: var(--accent-emerald-subtle); color: var(--accent-emerald); border-color: #a7f3d0; }
+
+    /* Visual Callout Boxes */
+    .callout {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin: 24px 0;
+      font-size: 0.95em;
+      background: #ffffff;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+    }
+    .callout-blue { border-left: 4px solid var(--accent-blue); background: #fbfdff; }
+    .callout-danger { border-left: 4px solid var(--accent-danger); background: #fffdfd; }
+    .callout-warning { border-left: 4px solid var(--accent-warning); background: #fffdf7; }
+    .callout-success { border-left: 4px solid var(--accent-emerald); background: #fcfdfd; }
+
+    .callout-title {
+      font-weight: 700;
+      font-size: 1em;
+      color: var(--text-main);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Diagram / Illustrated Flow Container */
+    .flow-diagram {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 24px;
+      margin: 24px 0;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      line-height: 1.6;
+      color: var(--text-main);
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    /* Two-column Comparison Grid */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin: 24px 0;
+    }
+    .compare-card {
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 20px 22px;
+      background: #ffffff;
+    }
+    .compare-card.positive { border-top: 3px solid var(--accent-emerald); }
+    .compare-card.negative { border-top: 3px solid var(--accent-danger); }
+
+    .compare-card h4 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      font-size: 1.05em;
+    }
+
+    /* Clean Crisp Tables */
+    table.handout-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 24px 0;
+      font-size: 0.9em;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    table.handout-table th, table.handout-table td {
+      border: 1px solid var(--border-color);
+      padding: 12px 16px;
+      text-align: left;
+    }
+    table.handout-table th {
+      background: var(--bg-subtle);
+      color: var(--text-main);
+      font-weight: 600;
+    }
+    table.handout-table tr:nth-child(even) {
+      background: #fafbfc;
+    }
+
+    /* Checklist Box */
+    .checklist {
+      list-style: none;
+      padding: 0;
+      margin: 18px 0;
+    }
+    .checklist li {
+      padding: 8px 12px;
+      margin-bottom: 6px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.92em;
+    }
+    .check-icon {
+      color: var(--accent-emerald);
+      font-weight: 700;
+    }
+
+    /* Print Specific Styles */
+    @media print {
+      .top-bar, .sidebar, .btn { display: none !important; }
+      .layout-wrapper { display: block; padding: 0; }
+      .content-area { border: none; box-shadow: none; padding: 0; }
+      body { background: #ffffff; font-size: 14px; }
+      h2 { page-break-before: always; margin-top: 20px; }
+      .callout, .flow-diagram, table { page-break-inside: avoid; }
+    }
+
+    @media (max-width: 900px) {
+      .layout-wrapper { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .content-area { padding: 30px 24px; }
+      .compare-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="top-bar">
+    <div class="top-bar-title">
+      <span>📚</span> LLM 在教學上的運用問題與法理合規實務手冊
+    </div>
+    <div class="top-bar-actions">
+      <a href="index.html" class="btn btn-secondary">🖥️ 切換至投影片模式</a>
+      <button onclick="window.print()" class="btn btn-primary">🖨️ 列印 / 另存 PDF 講義</button>
+    </div>
+  </header>
+
+  <div class="layout-wrapper">
+    <!-- Sidebar Sticky Navigation -->
+    <nav class="sidebar">
+      <div class="toc-title">講義章節目錄</div>
+      <ul class="toc-list">
+        <li class="toc-item"><a href="#sec-overview" class="toc-link">1. 全景導讀：雙刃劍效應</a></li>
+        <li class="toc-item"><a href="#sec-fair-use" class="toc-link">2. 迷思：教育合理使用</a></li>
+        <li class="toc-item"><a href="#sec-input-risk" class="toc-link">3. 輸入端危機：教材與個資</a></li>
+        <li class="toc-item"><a href="#sec-output-risk" class="toc-link">4. 輸出端危機：記憶化吐出</a></li>
+        <li class="toc-item"><a href="#sec-cognitive" class="toc-link">5. 認知陷阱：偽造文獻</a></li>
+        <li class="toc-item"><a href="#sec-academic" class="toc-link">6. 評量危機：AI 代筆失靈</a></li>
+        <li class="toc-item"><a href="#sec-solution" class="toc-link">7. 制度解方：法定授權沙盒</a></li>
+        <li class="toc-item"><a href="#sec-action" class="toc-link">8. 落地防線：三級行動手冊</a></li>
+        <li class="toc-item"><a href="#sec-checklist" class="toc-link">9. 附錄：教學自檢清單</a></li>
+      </ul>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="content-area">
+      <!-- Document Header -->
+      <header>
+        <span class="badge badge-blue">教育科技 × 法律合規特刊</span>
+        <span class="badge">圖文精要講義</span>
+        <span class="badge badge-green">2026 最新版</span>
+        <h1>大型語言模型 (LLM) 在教學上的運用問題<br><span style="font-size: 0.65em; font-weight: 500; color: var(--text-muted);">著作權邊界、學術誠信、資料隱私與教學評量重構實務手冊</span></h1>
+        <p style="font-size: 0.95em; color: var(--text-muted);">
+          本講義基於全球代表性 AI 版權判例（<em>Cambridge Univ. Press</em>、<em>Lawsnote 案</em>、<em>GEMA v. OpenAI</em>、<em>Bartz v. Anthropic</em>）及計算機科學最新技術實證編撰，專為學校行政、第一線教師與教學研發團隊提供兼具法理深度與操作性的合規行動準則。
+        </p>
+      </header>
+
+      <!-- Section 1 -->
+      <section id="sec-overview">
+        <h2>1. 全景導讀：教育現場的 LLM 雙刃劍</h2>
+        <p>
+          大型語言模型（LLM）的迅速普及正深刻重塑全球教育生態。它在為個別化自學、教案設計與備課帶來空前效率的同時，也對傳統的智慧財產權秩序、個人資料隱私、教學評量信度及學術誠信基石帶來了前所未有的制度性衝擊。
+        </p>
+
+        <div class="flow-diagram">
+【教育現場 LLM 的兩極衝擊架構圖】
+
+       ┌───────────────────────────────┐
+       │   大型語言模型 (LLM) 導入教育   │
+       └──────────────┬────────────────┘
+                      │
+        ┌─────────────┴─────────────┐
+        ▼                           ▼
+ ┌──────────────┐            ┌──────────────┐
+ │ ✨ 學習賦能  │            │ 🚨 制度危機  │
+ ├──────────────┤            ├──────────────┤
+ │• 因材施教助教│            │• 著作權侵害  │
+ │• 高效備課框架│            │• 個資題庫外洩│
+ │• 多元問題探索│            │• 學術誠信崩塌│
+ │• 程式除錯引導│            │• 深度思考退化│
+ └──────────────┘            └──────────────┘</div>
+
+        <div class="compare-grid">
+          <div class="compare-card positive">
+            <h4>💡 正向賦能面 (Opportunities)</h4>
+            <ul>
+              <li><strong>蘇格拉底式引導</strong>：充當 24 小時不間斷的耐煩家教，針對個別盲點提供梯級引導。</li>
+              <li><strong>客製化分層教學</strong>：數秒內將高深理論改寫為不同閱讀水平（小學、中學、大學）的輔助範例。</li>
+            </ul>
+          </div>
+          <div class="compare-card negative">
+            <h4>⚠️ 深層危機面 (Vulnerabilities)</h4>
+            <ul>
+              <li><strong>版權無知特權論</strong>：師生誤認「教育非營利」即可豁免一切著作權責任。</li>
+              <li><strong>認知與評量失真</strong>：傳統報告失去甄別能力，學生依賴 AI 產生偽知識感。</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2 -->
+      <section id="sec-fair-use">
+        <h2>2. 法律迷思破除：教育使用 ≠ 合理使用免死金牌</h2>
+        <p>
+          國內外教育現場最廣泛的認知誤區為：<strong>「只要我的目的純粹是為了學校授課，上傳或利用什麼版權教材都一律合法。」</strong> 這種觀念在當前司法審查中已被徹底否決。
+        </p>
+
+        <table class="handout-table">
+          <thead>
+            <tr>
+              <th style="width: 16%;">法域</th>
+              <th style="width: 22%;">法條依據</th>
+              <th style="width: 32%;">教育現場常見錯誤認知</th>
+              <th style="width: 30%;">司法實務之嚴格標準</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>美國法 (US)</strong></td>
+              <td>17 U.S.C. § 107<br>(Fair Use)</td>
+              <td>「我是公立學校非營利教學，符合第一要素即可自由利用。」</td>
+              <td><strong>第四要素（市場替代性）具決定性權重</strong>！在 <em>Cambridge University Press v. Patton</em> 案中，大學電子儲備系統過量提供教科書章節，被判侵害出版商授權市場。</td>
+            </tr>
+            <tr>
+              <td><strong>臺灣法 (TW)</strong></td>
+              <td>著作權法<br>第 46 條 / 第 65 條</td>
+              <td>「將整套題庫餵入 AI 建置聊天助教，符合『學校授課需要』。」</td>
+              <td>第 46 條嚴格限於<strong>「現場授課必要範圍」</strong>且須合法存取；將大量專有教材上傳至公有商業雲端 LLM 已踰越必要範圍，且在臺灣面臨第 91 條之<strong>刑事責任</strong>！</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout-danger">
+          <div class="callout-title">🚨 司法警訊：以刑逼民的本土風險</div>
+          臺灣新北地方法院於 2025 年 6 月在<strong>法源資訊訴七法案（Lawsnote 案）</strong>中，針對未經授權爬取法規資料庫之商業軟體創辦人判處 <strong>4 年與 2 年有期徒刑，民事判賠 1.05 億元</strong>。判決凸顯出：任何企圖利用未經授權資料庫構建 AI 應用的行為，均可能同時引爆刑事與天價賠償責任。
+        </div>
+      </section>
+
+      <!-- Section 3 -->
+      <section id="sec-input-risk">
+        <h2>3. 輸入端危機：教材、試題與學生作業洩漏</h2>
+        <p>
+          當師生將內容鍵入或上傳至商業對話框（如免費版 ChatGPT、Claude）時，資料將流經外部雲端伺服器，衍生兩大實質法律風險：
+        </p>
+
+        <h3>(1) 教材與未公開試題的「商業再訓練」與「記憶化洩漏」</h3>
+        <ul>
+          <li><strong>再訓練條款（Training Retention）</strong>：多數公有免費服務預設具備將對話納入後續預訓練之條款。未公開之期中期末考題、出版商精華投影片一旦上傳，等於無償授權給科技巨頭擴增語料。</li>
+          <li><strong>模型記憶化洩漏（Memorization Leakage）</strong>：深度神經網路具有將高頻或獨特結構文本刻入權重參數之特性。外部其他用戶輸入相近前綴時，模型可能直接「原樣吐出」該套考卷與標準答案，摧毀測驗公平性。</li>
+        </ul>
+
+        <h3>(2) 侵害學生作業著作權與違反隱私法規</h3>
+        <ul>
+          <li><strong>學生獨立著作權</strong>：依著作權法，學生創作之報告與論文獨立享有著作權。</li>
+          <li><strong>侵權與隱私風險</strong>：教師若未取得學生明確授權，擅自將整份學生作業批次上傳至公有 AI 平台進行評分，直接侵害學生著作之「公開傳輸權」，並違反《個人資料保護法》及國際教育隱私規範（如美國 FERPA）。</li>
+        </ul>
+
+        <div class="callout callout-warning">
+          <div class="callout-title">⚠️ 判例鏡鑑：Bartz v. Anthropic (2025.06)</div>
+          加州北區聯邦地方法院 Alsup 法官裁定：合法自購紙本書掃描電子化可構成合理使用，<strong>但從影子圖書館批量下載未授權內容作為訓練資料庫，絕非合理使用！</strong> 該案最終促成 Anthropic 支付 15 億美元天價和解。教育機構若將未經授權之版權電子書匯入自建知識庫，即面臨同等侵權定性。
+        </div>
+      </section>
+
+      <!-- Section 4 -->
+      <section id="sec-output-risk">
+        <h2>4. 輸出端危機：教師生成教材的「原樣吐出」侵權</h2>
+        <p>
+          不僅「輸入資料」有風險，「輸出生成內容」同樣是潛在侵權重災區：
+        </p>
+
+        <div class="flow-diagram">
+【模型輸出端侵權檢驗路徑】
+
+  Prompt:「請整理該理論的經典論述...」
+                  │
+                  ▼
+     模型觸發【通道視野 (Tunnel Vision)】
+     (Prefix > 50 tokens 鎖定機率路徑)
+                  │
+                  ▼
+  輸出端【原樣吐出 (Regurgitation)】他人受保護論文
+                  │
+                  ▼
+  ┌─────────────────────────────────────────────────┐
+  │ 德國慕尼黑地院 (GEMA v. OpenAI, 2025) 判例：     │
+  │ • 客觀存在實質同一性即屬侵權                     │
+  │ • 徹底駁回歐盟 CDSM 第 3/4 條 TDM 免責抗辯       │
+  │ • 模型商與公開散布之教師負直接侵權責任           │
+  └─────────────────────────────────────────────────┘</div>
+
+        <h3>(1) 著作權法上的「客觀實質相似性」</h3>
+        <p>
+          法院審查輸出端侵權時，不採信「神經網路內部僅有矩陣數學、未儲存檔案」的技術修辭。一旦教師生成的講義與他人受保護論文段落客觀上產生實質同一（Substantial Identity），印發散布即構成侵害重製權與散布權。
+        </p>
+
+        <h3>(2) 風格模仿（Style Infringement）與角色表達紅線</h3>
+        <p>
+          著作權法嚴格貫徹「思想與表達二分原則（Idea-Expression Dichotomy）」，抽象畫風（如「水彩風」、「極簡風」）不受保護；但若教師要求模型生成「宮崎駿龍貓風格插圖」或「迪士尼角色改編插圖」，只要在角色造型細節、色彩組合與具體構圖上與原作品產生實質相似，即跨越合法臨界點。
+        </p>
+      </section>
+
+      <!-- Section 5 -->
+      <section id="sec-cognitive">
+        <h2>5. 認知與教學本質風險：幻覺文獻與「認知外包」</h2>
+
+        <div class="compare-grid">
+          <div class="compare-card negative">
+            <h4>🤥 煞有介事的學術幻覺 (Hallucination)</h4>
+            <ul>
+              <li><strong>捏造學術引文</strong>：LLM 依機率拼接出格式完美但純屬虛構的論文標題、期刊卷期及 DOI。</li>
+              <li><strong>權威偏誤（Authority Bias）</strong>：學生易被流暢自信的修辭說服，放棄主動查證，導致偽科學知識在作業中擴散。</li>
+            </ul>
+          </div>
+          <div class="compare-card negative">
+            <h4>🧠 深度思維的「認知外包」危機</h4>
+            <ul>
+              <li><strong>思維跳階</strong>：略過痛苦的文獻梳理與邏輯推演，直奔答案，形成「能看懂不等於掌握」的知識幻覺。</li>
+              <li><strong>閱讀退化</strong>：學生失去解析複雜長篇論文與辯證多元觀點的專注力與耐受度。</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 6 -->
+      <section id="sec-academic">
+        <h2>6. 評量危機：AI 代筆、著作人缺位與探測器失靈</h2>
+
+        <h3>(1) 著作人資格（Human Authorship）缺位與學術不端</h3>
+        <p>
+          依據美國著作權局（USCO）於 <em>Zarya of the Dawn</em> 案的權威認定及各國法制，<strong>缺乏人類實質精神創作之純 AI 生成物，不得享有著作權保護，法律上屬於公有領域（Public Domain）</strong>。學生將 AI 代寫內容假冒個人原創提交，不僅無法主張版權，在學術倫理上更構成實質欺騙與學術不端（Academic Misconduct）。
+        </p>
+
+        <h3>(2) AI 偵測器（AI Detectors）的高偽陽性悲劇</h3>
+        <div class="callout callout-danger">
+          <div class="callout-title">⚠️ 切勿以 AI 偵測器評分作為作弊唯一證據！</div>
+          現行市售偵測器（如 GPTZero、Turnitin AI Detector）普遍依賴「困惑度（Perplexity）」指標。學術研究證實：<strong>非英語母語學生（ESL）撰寫的文章，因文法句型較為規整，高達 60% 以上會被系統誤判為 AI 生成</strong>！單憑偵測百分比懲處學生，將引發嚴重的校園信任危機與行政救濟紛爭。
+        </div>
+      </section>
+
+      <!-- Section 7 -->
+      <section id="sec-solution">
+        <h2>7. 制度解方：教育非合意法定授權與校園隱私沙盒</h2>
+
+        <h3>(1) 政策倡議：教育與科研非合意法定授權（Statutory License）</h3>
+        <p>
+          借鏡臺大法律學系蕭莉珍（2026）碩士論文之研究主張，面對 AI 時代著作權利用的困局，國家應推動<strong>「非合意法定授權制度」</strong>：
+        </p>
+        <ul>
+          <li><strong>允許利用、強制補償</strong>：在訓練階段允許非營利教育與研究機構利用既有著作，排除侵權禁令威脅。</li>
+          <li><strong>階梯式費率與集管調和</strong>：教育科研免除或採極低象徵性費率，由著作權集體管理組織（CMO）統一分配，未具名補償金轉入「公共文化基金」扶植原創作者。</li>
+        </ul>
+
+        <h3>(2) 技術護城河：校園專屬隱私沙盒（Zero Data Retention SLA）</h3>
+        <p>
+          學校行政單位應主導向合格 AI 供應商採購具備<strong>「零資料保留（Zero Data Retention）」</strong>合約保證的教育/企業專屬平台：
+        </p>
+        <div class="callout callout-success">
+          <div class="callout-title">🛡️ 校園 AI 採購「三不原則」合規底線</div>
+          <ol style="margin: 0; padding-left: 20px;">
+            <li><strong>絕不上傳公開雲端</strong>：所有數據經專屬加密通道存取，隔離於公有對話系統外。</li>
+            <li><strong>絕不用於二次訓練</strong>：供應商須簽署法律承諾，絕不將師生輸入資料用於模型迭代優化。</li>
+            <li><strong>絕不洩漏對話個資</strong>：即時過濾學生學號、姓名等個資，並在會話結束後物理清除記憶快取。</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- Section 8 -->
+      <section id="sec-action">
+        <h2>8. 落地實踐防線：學校、教師與學生三級行動手冊</h2>
+
+        <div class="flow-diagram">
+【教育生態系三級防護體系】
+
+  ┌─────────────────────────────────────────────────────────────┐
+  │ 🏫 學校行政端：訂定校園 AI 指引、採購企業級隱私沙盒、辦理倫理培訓 │
+  └──────────────────────────────┬──────────────────────────────┘
+                                 │
+  ┌──────────────────────────────▼──────────────────────────────┐
+  │ 👨‍🏫 教師評量端：典範轉型「歷程導向評量」、要求 Prompt 歷程、口試實作 │
+  └──────────────────────────────┬──────────────────────────────┘
+                                 │
+  ┌──────────────────────────────▼──────────────────────────────┐
+  │ 🧑‍🎓 學生學習端：透明化 AI 引用標註、定位為思辨對手、人工雙重查核文獻 │
+  └─────────────────────────────────────────────────────────────┘</div>
+
+        <h3>(1) 教學評量典範轉型實例</h3>
+        <table class="handout-table">
+          <thead>
+            <tr>
+              <th style="width: 25%;">傳統成果導向評量 (已失靈)</th>
+              <th style="width: 35%;">AI 時代「歷程導向評量」轉型方案</th>
+              <th style="width: 40%;">教學效益與防弊成效</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>回家撰寫 3000 字理論文獻心得報告。</td>
+              <td><strong>Prompt 協同思辨歷程日誌</strong>：要求學生繳交與 AI 對話之完整提示詞、追問路徑與挑錯修正筆記。</td>
+              <td>評量重點轉移至學生的「問題意識」與「引導校正能力」，杜絕一鍵生成代筆。</td>
+            </tr>
+            <tr>
+              <td>期末紙本書面報告。</td>
+              <td><strong>課堂現場 5 分鐘抽問口試 / 同儕盲審辯論</strong>。</td>
+              <td>真槍實彈檢驗學生是否真正消化理解該議題的核心邏輯。</td>
+            </tr>
+            <tr>
+              <td>傳統程式碼作業繳交。</td>
+              <td><strong>逆向代碼審查（Code Review）</strong>：由 AI 生成帶有隱藏 Bug 的程式碼，要求學生找出錯誤並論證修復方案。</td>
+              <td>鍛鍊更高階的批判性分析與系統架構評估能力。</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>(2) 學生端 AI 規範標註範本 (AI Citation Standard)</h3>
+        <p>作業末端應強制包含《AI 工具協同使用聲明表》：</p>
+        <div style="background: var(--bg-subtle); border: 1px dashed var(--border-dark); padding: 16px 20px; border-radius: 6px; font-size: 0.88em; font-family: var(--font-mono);">
+【AI 工具使用聲明範例】
+• 使用模型名稱：Claude 3.5 Sonnet / ChatGPT-4o
+• 輔助環節：文獻大綱發想、英文文法潤飾、程式碼除錯（占本作業內容約 20%）
+• 核心論點承諾：本篇第 3 章之案例分析與論證推演皆為本人獨立思考原創
+• 查核記錄：已對 AI 提及之 4 篇參考文獻進行圖書館資料庫人工查核並確認屬實</div>
+      </section>
+
+      <!-- Section 9 -->
+      <section id="sec-checklist">
+        <h2>9. 附錄：教師教學備課 5 步自檢清單</h2>
+        <ul class="checklist">
+          <li><span class="check-icon">✓</span> <strong>步驟 1（教材審查）</strong>：是否避免將整套未授權出版商商業教材或未公開題庫餵入免費版公有 AI？</li>
+          <li><span class="check-icon">✓</span> <strong>步驟 2（環境確認）</strong>：學校或研究室是否已開啟「不保存訓練資料（Zero Retention）」之帳號權限？</li>
+          <li><span class="check-icon">✓</span> <strong>步驟 3（生成檢驗）</strong>：使用 AI 產出輔助講義時，是否對其中的專有名詞、引文與法條進行 100% 人工核實？</li>
+          <li><span class="check-icon">✓</span> <strong>步驟 4（評量重構）</strong>：課程大綱（Syllabus）是否已清楚載明 AI 使用之准許界限，並設計歷程或口試環節？</li>
+          <li><span class="check-icon">✓</span> <strong>步驟 5（學生隱私）</strong>：在進行批改或評分時，是否已徹底去識別化，未擅自上傳學生個人姓名與語文著作？</li>
+        </ul>
+
+        <div class="callout callout-blue" style="margin-top: 40px;">
+          <div class="callout-title">📌 相關 Wiki 知識庫深度文獻導覽</div>
+          <ul style="margin: 0; padding-left: 20px; font-size: 0.9em;">
+            <li>核心概念頁：<a href="../../wiki/concepts/fair-use.md" target="_blank">合理使用原則與轉換性使用 (Fair Use)</a></li>
+            <li>核心概念頁：<a href="../../wiki/concepts/memorization-leakage.md" target="_blank">模型記憶化與原樣溢出 (Memorization Leakage)</a></li>
+            <li>核心概念頁：<a href="../../wiki/concepts/non-voluntary-license.md" target="_blank">生成式 AI 非合意授權制度 (Non-voluntary License)</a></li>
+            <li>案例頁面：<a href="../../wiki/cases/gema-v-openai.md" target="_blank">GEMA v. OpenAI (德國慕尼黑第一地院 2025 判決)</a></li>
+            <li>案例頁面：<a href="../../wiki/cases/lawsnote-v-lawsource.md" target="_blank">法源資訊訴七法案 (臺灣爬蟲刑事重判)</a></li>
+          </ul>
+        </div>
+      </section>
+    </main>
+  </div>
+
+</body>
+</html>

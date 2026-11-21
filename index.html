@@ -1,0 +1,687 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>LLM 在教學上的運用問題：著作權邊界、學術誠信與教學轉型（圖譜導向簡報）</title>
+  <!-- Reveal.js CDN CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reset.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/theme/white.min.css" id="theme">
+  <!-- Fonts: Inter & Noto Sans TC (Swiss Minimalist Typographic Style) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-page: #f8f9fa;
+      --bg-surface: #ffffff;
+      --bg-subtle: #f1f5f9;
+      --text-main: #0f172a;
+      --text-body: #334155;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --border-dark: #cbd5e1;
+      --accent-blue: #2563eb;
+      --accent-blue-subtle: #eff6ff;
+      --accent-danger: #dc2626;
+      --accent-danger-subtle: #fef2f2;
+      --accent-warning: #d97706;
+      --accent-warning-subtle: #fffbeb;
+      --accent-emerald: #059669;
+      --accent-emerald-subtle: #ecfdf5;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    body, .reveal {
+      font-family: var(--font-sans);
+      font-size: 24px;
+      color: var(--text-body);
+      background-color: var(--bg-page);
+    }
+    .reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+      font-family: var(--font-sans);
+      color: var(--text-main);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      text-transform: none;
+    }
+    .reveal h1 { font-size: 2.1em; line-height: 1.25; }
+    .reveal h2 { font-size: 1.35em; margin-bottom: 6px; }
+    .reveal p.subtitle {
+      font-size: 0.72em;
+      color: var(--text-muted);
+      margin-top: 0;
+      margin-bottom: 18px;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      font-size: 0.52em;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border-radius: 4px;
+      background: var(--bg-subtle);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+      margin-bottom: 12px;
+    }
+    .badge-accent { background: var(--accent-blue-subtle); color: var(--accent-blue); border-color: #bfdbfe; }
+    .badge-danger { background: var(--accent-danger-subtle); color: var(--accent-danger); border-color: #fecaca; }
+    .badge-warning { background: var(--accent-warning-subtle); color: var(--accent-warning); border-color: #fde68a; }
+    .badge-emerald { background: var(--accent-emerald-subtle); color: var(--accent-emerald); border-color: #a7f3d0; }
+
+    /* Top Floating Handout Switcher Button */
+    .top-floating-btn {
+      position: fixed;
+      top: 16px;
+      right: 20px;
+      z-index: 9999;
+      background: var(--bg-surface);
+      color: var(--accent-blue);
+      border: 1px solid #bfdbfe;
+      padding: 6px 14px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 6px;
+      text-decoration: none;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .top-floating-btn:hover {
+      background: var(--accent-blue-subtle);
+      border-color: var(--accent-blue);
+    }
+
+    /* =======================================================
+       GRAPH COMPONENT STYLES (Interactive Structured Card Nodes)
+       ======================================================= */
+    .graph-canvas {
+      width: 100%;
+      margin: 10px 0 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .graph-node {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px 18px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+      text-align: left;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+    .graph-node:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.07);
+      border-color: var(--accent-blue);
+    }
+    .graph-node.accent { border-left: 4px solid var(--accent-blue); }
+    .graph-node.danger { border-left: 4px solid var(--accent-danger); background: #fffdfd; }
+    .graph-node.warning { border-left: 4px solid var(--accent-warning); background: #fffdf7; }
+    .graph-node.emerald { border-left: 4px solid var(--accent-emerald); background: #fcfffd; }
+
+    .node-header {
+      font-size: 0.85em;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    .node-body {
+      font-size: 0.72em;
+      color: var(--text-body);
+      line-height: 1.45;
+      margin: 0;
+    }
+    .node-meta {
+      font-size: 0.65em;
+      color: var(--text-muted);
+      margin-top: 6px;
+      display: block;
+    }
+
+    /* Flow Connectors & Edges */
+    .flow-edge-horizontal {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 0 8px;
+      color: var(--text-muted);
+      font-size: 0.62em;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      min-width: 50px;
+    }
+    .flow-edge-vertical {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: row;
+      gap: 6px;
+      padding: 6px 0;
+      color: var(--text-muted);
+      font-size: 0.62em;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .edge-symbol {
+      font-size: 1.3em;
+      color: var(--accent-blue);
+      line-height: 1;
+    }
+    .edge-symbol.danger { color: var(--accent-danger); }
+    .edge-symbol.warning { color: var(--accent-warning); }
+
+    /* Layout Grids */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      width: 100%;
+      text-align: left;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      width: 100%;
+      text-align: left;
+    }
+    .flex-row-center {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      gap: 8px;
+    }
+
+    /* Practical Bottom Callout Annotation */
+    .graph-annotation {
+      width: 100%;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--accent-blue);
+      border-radius: 0 6px 6px 0;
+      padding: 10px 16px;
+      font-size: 0.72em;
+      color: var(--text-body);
+      text-align: left;
+      margin-top: 10px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+    }
+    .graph-annotation.danger { border-left-color: var(--accent-danger); background: #fffdfd; }
+    .graph-annotation.warning { border-left-color: var(--accent-warning); background: #fffdf7; }
+    .graph-annotation.emerald { border-left-color: var(--accent-emerald); background: #fcfffd; }
+
+    /* Reveal UI Tweaks */
+    .reveal .controls { color: var(--text-muted); }
+    .reveal .progress { color: var(--accent-blue); height: 3px; }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Switch to Handout Button -->
+  <a href="handout.html" class="top-floating-btn">
+    <span>📄</span> 切換至圖文講義手冊
+  </a>
+
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- ========================================================
+           Slide 1: 全景導引：教學現場的 AI 雙刃劍拓撲
+           ======================================================== -->
+      <section style="text-align: left; padding: 20px;">
+        <span class="badge badge-accent">全景導引 · 雙向拓撲</span>
+        <h2>教育現場的 LLM 雙刃劍拓撲</h2>
+        <p class="subtitle">從萬能教學助教到信任基石崩解的制度張力場</p>
+
+        <div class="graph-canvas">
+          <div style="display: flex; width: 100%; gap: 20px; align-items: center;">
+            <!-- Left Cluster: Opportunities -->
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+              <div class="graph-node emerald">
+                <div class="node-header">✨ 個別化引導助教</div>
+                <div class="node-body">24 小時蘇格拉底式提問，依個別理解盲點遞進引導</div>
+              </div>
+              <div class="graph-node emerald">
+                <div class="node-header">⚡ 高效備課分層</div>
+                <div class="node-body">數秒生成多難度分級範例、對照例題與多語言解析</div>
+              </div>
+              <div class="graph-node emerald">
+                <div class="node-header">🛠️ 輔助程式除錯</div>
+                <div class="node-body">輔助學生拆解語法邏輯，降低初學者挫折門檻</div>
+              </div>
+            </div>
+
+            <!-- Central Node -->
+            <div style="width: 170px; text-align: center; display: flex; flex-direction: column; align-items: center;">
+              <span style="font-size: 0.6em; font-weight: 700; color: var(--accent-emerald);">◄ 促成賦能 (ENABLES)</span>
+              <div class="graph-node accent" style="text-align: center; padding: 18px 12px; margin: 8px 0; border: 2px solid var(--accent-blue);">
+                <div style="font-size: 1.1em; font-weight: 700; color: var(--accent-blue);">🏫 LLM</div>
+                <div style="font-weight: 700; font-size: 0.85em; color: var(--text-main);">進入課堂</div>
+              </div>
+              <span style="font-size: 0.6em; font-weight: 700; color: var(--accent-danger);">衝擊制度 (DISRUPTS) ►</span>
+            </div>
+
+            <!-- Right Cluster: Structural Risks -->
+            <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
+              <div class="graph-node danger">
+                <div class="node-header">🚨 考題教材外洩</div>
+                <div class="node-body">未公開試題餵入雲端，被納入訓練集公開記憶化吐出</div>
+              </div>
+              <div class="graph-node danger">
+                <div class="node-header">🤖 作業代筆失真</div>
+                <div class="node-body">一鍵代寫瓦解傳統紙本申論，期末報告失去鑑別度</div>
+              </div>
+              <div class="graph-node danger">
+                <div class="node-header">🤥 煞有介事幻覺</div>
+                <div class="node-body">捏造學術引文與虛構 DOI，認知外包導致思考萎縮</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="graph-annotation">
+          💡 <strong>核心拷問</strong>：當學生按一個鍵就能交出 3000 字論文，我們到底在評量「學生的能力」還是「AI 的算力」？
+        </div>
+      </section>
+
+      <!-- ========================================================
+           Slide 2: 迷思辨正：教育使用 ≠ 合理使用免死金牌
+           ======================================================== -->
+      <section style="text-align: left; padding: 20px;">
+        <span class="badge badge-danger">迷思辨正 · 衝突對照</span>
+        <h2>迷思辨正：教育目的 ≠ 隨意利用免死金牌</h2>
+        <p class="subtitle">別把「學校授課」當成無上限豁免，市場替代性是第一鐵律</p>
+
+        <div class="graph-canvas">
+          <div class="grid-2">
+            <!-- Left: Common Misconception -->
+            <div class="graph-node" style="border-top: 3px solid #94a3b8;">
+              <div class="node-header" style="color: var(--text-muted);">【常見認知盲區】非營利即合法？</div>
+              <p class="node-body">
+                「只要是為了公立學校授課，上傳或利用什麼版權教材都一律享有合理使用特權。」
+              </p>
+              <div class="node-meta" style="color: var(--accent-danger);">
+                ⚠️ 盲點：忽視了雲端對話框存在「第三方伺服器再重製」
+              </div>
+            </div>
+
+            <!-- Right: Judicial Reality -->
+            <div class="graph-node danger" style="border-top: 3px solid var(--accent-danger);">
+              <div class="node-header" style="color: var(--accent-danger);">【司法實務鐵律】市場替代性檢驗</div>
+              <p class="node-body">
+                <strong>美 § 107 第四要素具有決定性！</strong> 若大量提供替代教科書之章節，即便為教學仍屬侵權（<em>Cambridge Univ. Press 案</em>）。
+              </p>
+              <div class="node-meta" style="color: var(--accent-blue);">
+                ⚖️ 臺灣著作權法第 46 條僅限「現場授課必要範圍」
+              </div>
+            </div>
+          </div>
+
+          <!-- Collision Flow -->
+          <div style="display: flex; align-items: center; justify-content: center; width: 100%; margin: 12px 0;">
+            <div style="background: var(--accent-danger-subtle); color: var(--accent-danger); border: 1px dashed var(--accent-danger); padding: 4px 16px; border-radius: 20px; font-size: 0.68em; font-weight: 700;">
+              ⚡ 撞擊結果：整本版權教材餵入公有 LLM ➔ 構成違法重製與散布！
+            </div>
+          </div>
+        </div>
+
+        <div class="graph-annotation danger">
+          🚨 <strong>教師必知</strong>：公有免費商業對話框預設開啟再訓練條款，把市售教材整套上傳，等同於擅自把出版商財產送給 AI 巨頭。
+        </div>
+      </section>
+
+      <!-- ========================================================
+           Slide 3: 輸入端實務陷阱：考題未公開，為什麼被別人問出來了？
+           ======================================================== -->
+      <section style="text-align: left; padding: 20px;">
+        <span class="badge badge-warning">輸入端陷阱 · 因果鏈圖</span>
+        <h2>輸入端陷阱：未公開考題的外洩因果鏈</h2>
+        <p class="subtitle">模型記憶化（Memorization）如何將期中期末試題變成公開秘密</p>
+
+        <div class="graph-canvas">
+          <div class="flex-row-center">
+            <!-- Step 1 -->
+            <div class="graph-node accent" style="flex: 1;">
+              <div class="node-header">1. 教師命題上傳</div>
+              <div class="node-body">將期中期末考題、標準評分詳解餵入公有免費對話框</div>
+            </div>
+
+            <div class="flow-edge-horizontal">
+              <span class="edge-symbol">→</span>
+              <span>伺服器留存</span>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="graph-node warning" style="flex: 1;">
+              <div class="node-header">2. 納入預訓練語料</div>
+              <div class="node-body">雲端服務商將用戶對話資料持久化，排程進入再訓練叢集</div>
+            </div>
+
+            <div class="flow-edge-horizontal">
+              <span class="edge-symbol warning">→</span>
+              <span>參數過擬合</span>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="graph-node danger" style="flex: 1.1;">
+              <div class="node-header">3. 記憶化吐出 (Leakage)</div>
+              <div class="node-body">外部用戶輸入章節前綴，模型原樣吐出整份期末試題與答案！</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="graph-annotation warning">
+          🛡️ <strong>實務防禦守則</strong>：命題與研究階段嚴禁使用個人免費帳號！涉及考題與專利成果，一律使用單機離線模型或校園無留存沙盒。
+        </div>
+      </section>
+
+      <!-- ========================================================
+           Slide 4: 學生作業倫理：把全班報告丟給 AI 批改合法嗎？
+           ======================================================== -->
+      <section style="text-align: left; padding: 20px;">
+        <span class="badge badge-danger">學生權益 · 實體互動圖</span>
+        <h2>學生作業倫理：全班報告餵給 AI 批改的法律地雷</h2>
+        <p class="subtitle">學生對作業享有獨立著作權；未經同意批量上傳涉嫌侵犯隱私與版權</p>
+
+        <div class="graph-canvas">
+          <div style="display: flex; gap: 14px; width: 100%; align-items: stretch;">
+            <!-- Student Node -->
+            <div class="graph-node emerald" style="flex: 1;">
+              <div class="node-header">🧑‍🎓 學生個體</div>
+              <div class="node-body">
+                • 原始享有獨立語文著作權<br>
+                • 享有姓名表示權與隱私期待<br>
+                • 未將作品授權轉讓學校
+              </div>
+            </div>
+
+            <!-- Middle Conflict -->
+            <div style="flex: 1.2; display: flex; flex-direction: column; justify-content: center; gap: 8px;">
+              <div style="background: var(--bg-surface); border: 1px dashed var(--accent-danger); border-radius: 6px; padding: 10px; font-size: 0.7em; text-align: center;">
+                <span style="color: var(--accent-danger); font-weight: 700;">⚠️ 踩雷操作：</span><br>
+                教師為節省時間，將全班數十份作業打包上傳至未簽約之商業 AI 批改工具
+              </div>
+              <div style="text-align: center; color: var(--accent-danger); font-size: 0.68em; font-weight: 700;">
+                ▼ 侵害「公開傳輸權」與個資法規 (美 FERPA)
+              </div>
+            </div>
+
+            <!-- Public Cloud Node -->
+            <div class="graph-node danger" style="flex: 1;">
+              <div class="node-header">☁️ 公有商業平台</div>
+              <div class="node-body">
+                • 提取學生報告擴增題庫<br>
+                • 學生姓名、學號等個資外洩<br>
+                • 產生未經授權第三方利用
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="graph-annotation">
+          💡 <strong>教師倫理底線</strong>：學生並非學校的附屬品；批改前必須取得學生書面授權，或由學校統一部署去識別化的校園專用工具。
+        </div>
+      </section>
+
+      <!-- ========================================================
+           Slide 5: 輸出端風險：生成講義為何會「抄襲」別人？
+           ======================================================== -->
+      <section style="text-align: left; padding: 20px;">
+        <span class="badge badge-danger">輸出端風險 · 漏斗穿透圖</span>
+        <h2>輸出端風險：AI 生成講義為何會「客觀侵權」？</h2>
+        <p class="subtitle">當提示詞前綴超過 50 tokens 時，模型將引發原樣重現（Regurgitation）</p>
+
+        <div class="graph-canvas">
+          <div class="flex-row-center">
+            <!-- Prompt -->
+            <div class="graph-node" style="flex: 1;">
+              <div class="node-header">Prompt 前綴過長</div>
+              <div class="node-body">輸入特定理論段落或詩詞前奏（超過 50 tokens）</div>
+            </div>
+
+            <div class="flow-edge-horizontal">
+              <span class="edge-symbol">→</span>
+              <span>束搜尋鎖定</span>
+            </div>
+
+            <!-- Tunnel Vision -->
+            <div class="graph-node warning" style="flex: 1;">
+              <div class="node-header">通道視野 (Tunnel Vision)</div>
+              <div class="node-body">條件機率急遽收窄，模型無法發散創造</div>
+            </div>
+
+            <div class="flow-edge-horizontal">
+              <span class="edge-symbol danger">→</span>
+              <span>原樣吐出</span>
+            </div>
+
+            <!-- Regurgitation -->
+            <div class="graph-node danger" style="flex: 1.1;">
+              <div class="node-header">原樣吐出他人專書</div>
+              <div class="node-body">近乎 100% 逐字重現他人受保護論文與歌詞！</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="graph-annotation danger">
+          ⚖️ <strong>歐洲司法震撼彈</strong>：德國慕尼黑地院 2025 年 <em>GEMA v. OpenAI</em> 判例確立——模型吐出受保護內容構成直接侵權，教師印發教材亦負散布責任！
+        </div>
+      </section>
+
+      <!-- ========================================================
+           Slide 6: 認知陷阱：如何看穿學生的「煞有介事假文獻」？
+           ======================================================== -->
+      <section style="text-align: left; padding: 20px;">
+        <span class="badge">認知科學 · 惡性循環圖</span>
+        <h2>認知陷阱：學術幻覺與「認知外包」循環</h2>
+        <p class="subtitle">流暢文筆是 AI 最危險的偽裝；假文獻摧毀學生深度思維能力</p>
+
+        <div class="graph-canvas">
+          <div class="grid-2">
+            <!-- Left: Hallucination Anatomy -->
+            <div class="graph-node danger">
+              <div class="node-header" style="color: var(--accent-danger);">🤥 完美學術幻覺的解剖</div>
+              <p class="node-body">
+                • <strong>真實作者</strong>：挑選領域內知名學者名字<br>
+                • <strong>煞有介事標題</strong>：依機率拼接出看似權威的論文名稱<br>
+                • <strong>偽造 DOI</strong>：格式完整但點擊後查無此篇的死連結
+              </p>
+            </div>
+
+            <!-- Right: Cognitive Offloading -->
+            <div class="graph-node warning">
+              <div class="node-header" style="color: var(--accent-warning);">🧠 認知外包 (Cognitive Offloading)</div>
+              <p class="node-body">
+                • <strong>思維跳階</strong>：略過痛苦的文獻閱讀與推演直奔答案<br>
+                • <strong>知識假象</strong>：看懂 AI 的文字，誤以為自己已經掌握<br>
+                • <strong>能力萎縮</strong>：長文解析耐受力與邏輯質疑能力喪失
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="graph-annotation">
+          🔍 <strong>教師抓假技巧</strong>：隨機抽查作業參考文獻的 DOI 與卷期；假文獻通常具有「作者存在、期刊存在，但該卷期根本沒有這篇文章」的特徵。
+        </div>
+      </section>
+
+      <!-- ========================================================
+           Slide 7: 偵測器迷思：為什麼不能用 AI 探測器抓學生作弊？
+           ======================================================== -->
+      <section style="text-align: left; padding: 20px;">
+        <span class="badge badge-warning">評量危機 · 失衡天平</span>
+        <h2>偵測器迷思：為什麼不能單憑探測器判定作弊？</h2>
+        <p class="subtitle">市售 AI 偵測器充斥偽陽性；盲信數據極易釀成嚴重教學冤抑</p>
+
+        <div class="graph-canvas">
+          <div style="display: flex; gap: 16px; width: 100%; align-items: center;">
+            <div class="graph-node" style="flex: 1;">
+              <div class="node-header">市售偵測工具 (Turnitin/GPTZero)</div>
+              <div class="node-body">依賴「困惑度 (Perplexity)」與「突發性 (Burstiness)」統計檢測</div>
+            </div>
+
+            <div class="flow-edge-horizontal">
+              <span class="edge-symbol danger">⚡</span>
+              <span>高達 60% 誤判</span>
+            </div>
+
+            <div class="graph-node danger" style="flex: 1.2;">
+              <div class="node-header" style="color: var(--accent-danger);">嚴重的「母語歧視」偽陽性</div>
+              <div class="node-body">
+                <strong>國際生與非英語母語者（ESL）</strong> 因寫作文法較規整、單詞重複，被誤判為「AI 生成作弊」的機率高達 60% 以上！
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="graph-annotation danger">
+          ⚠️ <strong>頂尖大學共識</strong>：不得單憑 AI 偵測器的百分比數值作為處分學生的唯一依據！
+        </div>
+      </section>
+
+      <!-- ========================================================
+           Slide 8: 制度解方：學校該給老師什麼樣的安全環境？
+           ======================================================== -->
+      <section style="text-align: left; padding: 20px;">
+        <span class="badge badge-emerald">制度解方 · 雙重護城河</span>
+        <h2>制度解方：校園 AI 安全雙重護城河</h2>
+        <p class="subtitle">解決教學困境不能只靠教師道德自律，學校必須提供制度與隱私沙盒</p>
+
+        <div class="graph-canvas">
+          <div class="grid-2">
+            <!-- Left Shield -->
+            <div class="graph-node emerald">
+              <div class="node-header" style="color: var(--accent-emerald);">🛡️ 制度護城河：教育法定授權</div>
+              <p class="node-body">
+                • 借鏡臺大蕭莉珍（2026）碩士論文建議<br>
+                • 倡議非合意法定授權（Statutory License）<br>
+                • 排除侵權禁令威脅，給予非營利教育免責或象徵性補償費率
+              </p>
+            </div>
+
+            <!-- Right Shield -->
+            <div class="graph-node accent">
+              <div class="node-header" style="color: var(--accent-blue);">🏰 技術護城河：校園專屬隱私沙盒</div>
+              <p class="node-body">
+                • 學校採購 <strong>Zero Data Retention SLA</strong><br>
+                • <strong>落實三不原則</strong>：絕不上傳公開雲、絕不用於二次訓練、絕不洩漏對話個資<br>
+                • 考題與學生作業物理脫敏
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="graph-annotation emerald">
+          🏫 <strong>行政行動</strong>：學校應統一與廠商簽訂教育企業合約，切斷數據回傳訓練的管道，讓第一線師生不再鋌而走險。
+        </div>
+      </section>
+
+      <!-- ========================================================
+           Slide 9: 實務大作戰：3 大取代傳統報告的「歷程評量」轉型
+           ======================================================== -->
+      <section style="text-align: left; padding: 20px;">
+        <span class="badge badge-accent">評量革命 · 三大範式</span>
+        <h2>實務大作戰：3 大取代傳統報告的「歷程評量」</h2>
+        <p class="subtitle">宣告傳統 3000 字報告失靈；從「防賊防代寫」轉向「評量思維駕馭力」</p>
+
+        <div class="graph-canvas">
+          <div class="grid-3">
+            <div class="graph-node accent">
+              <div class="node-header">🎯 方案 A：思辨日誌</div>
+              <div class="node-body">
+                繳交完整 <strong>Prompt 互動日誌</strong>，包含追問反駁過程與抓出 AI 錯誤的修正筆記。
+              </div>
+            </div>
+            <div class="graph-node accent">
+              <div class="node-header">🎯 方案 B：5分鐘抽問</div>
+              <div class="node-body">
+                課堂現場 <strong>5 分鐘盲抽口試</strong>，真槍實彈檢驗學生是否具備真實思維主權。
+              </div>
+            </div>
+            <div class="graph-node accent">
+              <div class="node-header">🎯 方案 C：逆向除錯</div>
+              <div class="node-body">
+                由 AI 生成帶有隱藏謬誤的文章或代碼，讓學生擔任審查員抓出 Bug 並論證修復。
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="graph-annotation">
+          📋 <strong>作業必附規範</strong>：作業後強制附上《AI 協同使用聲明表》，載明使用模型、輔助比例與真實文獻查核確認。
+        </div>
+      </section>
+
+      <!-- ========================================================
+           Slide 10: 終局收斂：回歸教育的本質
+           ======================================================== -->
+      <section style="text-align: left; padding: 20px;">
+        <span class="badge">終局收斂 · 價值向心圖</span>
+        <h2>終局收斂：回歸教育的本質</h2>
+        <p class="subtitle">AI 算力越強大，人類的批判力、同理心與倫理邊界就越不可替代</p>
+
+        <div class="graph-canvas">
+          <div style="display: flex; flex-direction: column; width: 100%; gap: 10px; align-items: center;">
+            <div class="graph-node" style="width: 85%; text-align: center; background: var(--bg-subtle);">
+              <div style="font-size: 0.75em; color: var(--text-muted); font-weight: 600;">最外層 (工具層)</div>
+              <div style="font-size: 0.9em; font-weight: 700; color: var(--text-main);">大型語言模型 (LLM) ➔ 提供無限資訊與流暢文本</div>
+            </div>
+
+            <div style="color: var(--accent-blue); font-size: 1.2em; line-height: 1;">↓ 支撐與放大</div>
+
+            <div class="graph-node accent" style="width: 70%; text-align: center;">
+              <div style="font-size: 0.75em; color: var(--accent-blue); font-weight: 600;">中間層 (能力層)</div>
+              <div style="font-size: 0.9em; font-weight: 700; color: var(--text-main);">提問架構力 · 事實驗證力 · 倫理邊界自覺</div>
+            </div>
+
+            <div style="color: var(--accent-emerald); font-size: 1.2em; line-height: 1;">↓ 昇華至核心</div>
+
+            <div class="graph-node emerald" style="width: 55%; text-align: center; border: 2px solid var(--accent-emerald);">
+              <div style="font-size: 0.75em; color: var(--accent-emerald); font-weight: 700;">👑 核心層 (教育本質)</div>
+              <div style="font-size: 0.95em; font-weight: 800; color: var(--text-main);">人類獨有的批判性思維、同理心與道德判斷</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="graph-annotation emerald">
+          🌟 <strong>結語金句</strong>：教育者的終極使命，不是與 AI 競逐產出速度，而是引導學生在演算法的浪潮中，牢牢掌握思考的主權。
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- Reveal.js CDN Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.js"></script>
+  <script>
+    Reveal.initialize({
+      controls: true,
+      progress: true,
+      center: true,
+      hash: true,
+      transition: 'fade',
+      transitionSpeed: 'fast',
+      backgroundTransition: 'fade'
+    });
+  </script>
+</body>
+</html>
